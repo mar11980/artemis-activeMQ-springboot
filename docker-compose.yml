@@ -14,7 +14,7 @@ services:
 
     volumes:
       - ./postgres-data:/var/lib/postgresql
-      #      - ./db/schema.sqleee:/docker-entrypoint-initdb.d/schema.sqleee
+      #      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - ./db/data.sql:/docker-entrypoint-initdb.d/data.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
@@ -30,6 +30,21 @@ services:
     ports:
       - "16686:16686"
       - "4317:4317"
+
+  artemis:
+    image: apache/artemis:latest
+    container_name: artemis-broker
+
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+
+    environment:
+      ARTEMIS_USER: admin
+      ARTEMIS_PASSWORD: admin
+
+    volumes:
+      - ./src/main/resources/broker.xml:/var/lib/artemis-instance/etc/broker.xml
 
   my-artemisMQ-service:
     build: .
@@ -65,7 +80,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
       SPRING_SQL_INIT_MODE: always
-      #      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:db/schema.sqleee
+      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:db/schema.sql
       SPRING_SQL_INIT_DATA_LOCATIONS: classpath:db/data.sql
 
       SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"

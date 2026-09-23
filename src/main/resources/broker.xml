@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns="urn:activemq"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="
+               urn:activemq
+               https://activemq.apache.org/schema/artemis-server.xsd">
+
+    <core>
+
+        <!-- ============================= -->
+        <!-- NETWORK -->
+        <!-- ============================= -->
+
+        <acceptors>
+
+            <acceptor name="artemis">
+                tcp://0.0.0.0:61616
+            </acceptor>
+
+        </acceptors>
+
+
+        <!-- ============================= -->
+        <!-- ADDRESSES / QUEUES -->
+        <!-- ============================= -->
+
+        <addresses>
+
+            <!-- Main application queue -->
+
+            <address name="orders">
+                <anycast>
+                    <queue name="orders"/>
+                </anycast>
+            </address>
+
+
+            <!-- Dead Letter Queue -->
+
+            <address name="DLQ">
+                <anycast>
+                    <queue name="DLQ"/>
+                </anycast>
+            </address>
+
+
+            <!-- Expired messages -->
+
+            <address name="EXPIRY">
+                <anycast>
+                    <queue name="EXPIRY"/>
+                </anycast>
+            </address>
+
+        </addresses>
+
+
+        <!-- ============================= -->
+        <!-- ADDRESS SETTINGS -->
+        <!-- ============================= -->
+
+        <address-settings>
+
+            <address-setting match="orders">
+
+                <!-- Messages failing too many times -->
+                <dead-letter-address>DLQ</dead-letter-address>
+
+                <!-- After 3 unsuccessful deliveries -->
+                <max-delivery-attempts>3</max-delivery-attempts>
+
+                <!-- Wait 2 seconds before retry -->
+                <redelivery-delay>2000</redelivery-delay>
+
+                <!-- Expired messages -->
+                <expiry-address>EXPIRY</expiry-address>
+
+            </address-setting>
+
+
+            <!-- Default settings -->
+
+            <address-setting match="#">
+
+                <max-size-bytes>10485760</max-size-bytes>
+
+                <address-full-policy>BLOCK</address-full-policy>
+
+            </address-setting>
+
+        </address-settings>
+
+
+        <!-- ============================= -->
+        <!-- SECURITY -->
+        <!-- ============================= -->
+
+        <security-settings>
+
+            <security-setting match="#">
+
+                <permission type="createAddress"
+                            roles="amq"/>
+
+                <permission type="deleteAddress"
+                            roles="amq"/>
+
+                <permission type="createDurableQueue"
+                            roles="amq"/>
+
+                <permission type="deleteDurableQueue"
+                            roles="amq"/>
+
+                <permission type="createNonDurableQueue"
+                            roles="amq"/>
+
+                <permission type="deleteNonDurableQueue"
+                            roles="amq"/>
+
+                <permission type="send"
+                            roles="amq"/>
+
+                <permission type="consume"
+                            roles="amq"/>
+
+            </security-setting>
+
+        </security-settings>
+
+    </core>
+
+</configuration>
