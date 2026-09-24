@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS order_event;
+DROP TABLE IF EXISTS "orders";
 
-CREATE TABLE order (
+CREATE TABLE "orders" (
     id BIGSERIAL PRIMARY KEY,
     customer VARCHAR(255),
     amount NUMERIC(10,0),

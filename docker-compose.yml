@@ -96,8 +96,8 @@ services:
       SPRING_JPA_SHOW_SQL: "true"
 
       SPRING_SQL_INIT_MODE: always
-#      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:db/schema.sql
-#      SPRING_SQL_INIT_DATA_LOCATIONS: classpath:db/data.sql
+      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:/db/schema.sql
+      SPRING_SQL_INIT_DATA_LOCATIONS: classpath:/db/data.sql
 
       SPRING_JMS_LISTENER_SESSION_TRANSACTED: "true"
 
