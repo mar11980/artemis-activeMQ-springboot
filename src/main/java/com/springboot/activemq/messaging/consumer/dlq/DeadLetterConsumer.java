@@ -14,11 +14,11 @@ public class DeadLetterConsumer {
 
         System.out.println();
         System.out.println(
-                "*************** DLQ ***************"
+                "☠️ *************** DLQ ***************"
         );
 
         System.out.println(
-                "Dead letter message:"
+                "💀 Dead letter message:"
         );
 
         System.out.println(
@@ -26,7 +26,7 @@ public class DeadLetterConsumer {
         );
 
         System.out.println(
-                "************************************"
+                "☠️ ************************************"
         );
         System.out.println();
     }

@@ -7,9 +7,11 @@ import jakarta.jms.JMSContext;
 import jakarta.jms.Queue;
 import com.springboot.activemq.messaging.dto.OrderRequest;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class OrderProducer {
 
     private static final String QUEUE_NAME = "orders";
@@ -17,14 +19,6 @@ public class OrderProducer {
     private final ConnectionFactory connectionFactory;
 
     private final ObjectMapper objectMapper;
-
-    public OrderProducer(
-            ConnectionFactory connectionFactory,
-            ObjectMapper objectMapper) {
-
-        this.connectionFactory = connectionFactory;
-        this.objectMapper = objectMapper;
-    }
 
     public void send(
             OrderRequest order,

@@ -4,19 +4,17 @@ package com.springboot.activemq.messaging.controller;
 
 import com.springboot.activemq.messaging.dto.OrderRequest;
 import com.springboot.activemq.messaging.producer.OrderProducer;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
+@AllArgsConstructor
 @SuppressWarnings("NullableProblems")
 public class OrderController {
 
     private final OrderProducer producer;
-
-    public OrderController(OrderProducer producer) {
-        this.producer = producer;
-    }
 
     @PostMapping
     public ResponseEntity<String> send(
@@ -26,7 +24,7 @@ public class OrderController {
         producer.send(order, 0);
 
         return ResponseEntity.ok(
-                "Order sent to Artemis MQ"
+                "Order sent to Artemis MQ 🚀"
         );
     }
 
@@ -42,7 +40,7 @@ public class OrderController {
         producer.send(order, 5000);
 
         return ResponseEntity.ok(
-                "Order sent with TTL = 5 seconds"
+                "Order sent with TTL = 5 seconds ⏳"
         );
     }
 }

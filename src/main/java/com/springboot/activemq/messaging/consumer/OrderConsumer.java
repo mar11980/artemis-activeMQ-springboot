@@ -1,8 +1,8 @@
 package com.springboot.activemq.messaging.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.jms.JMSException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.jms.TextMessage;
 
 import org.springframework.jms.annotation.JmsListener;
@@ -18,7 +18,10 @@ public class OrderConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @JmsListener(destination = "orders")
+
+    @JmsListener(
+            destination = "orders",
+            containerFactory = "jmsListenerContainerFactory")
     public void consume(TextMessage message)
             throws Exception {
 
@@ -43,10 +46,27 @@ public class OrderConsumer {
          * Simulate processing failure.
          */
 
+        System.out.println("Message ID: " + message.getJMSMessageID());
+
+        System.out.println(
+                "Delivery count: " +
+                        message.getIntProperty("JMSXDeliveryCount")
+        );
+
+        System.out.println(
+                "Redelivered: " +
+                        message.getJMSRedelivered()
+        );
+
+        System.out.println(
+                "Destination: " +
+                        message.getJMSDestination()
+        );
+
         if (order.isFail()) {
 
             System.out.println(
-                    "Processing FAILED!"
+                    "Processing FAILED! ❌"
             );
 
             throw new RuntimeException(
@@ -55,7 +75,7 @@ public class OrderConsumer {
         }
 
         System.out.println(
-                "Order processed successfully: "
+                "Order processed successfully: ✅ "
                         + order.getId()
         );
 

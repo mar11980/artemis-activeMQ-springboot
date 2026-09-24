@@ -3,8 +3,8 @@
 <configuration xmlns="urn:activemq"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="
-               urn:activemq
-               https://activemq.apache.org/schema/artemis-server.xsd">
+              urn:activemq
+              https://activemq.apache.org/schema/artemis-server.xsd">
 
     <core>
 
@@ -64,20 +64,21 @@
 
             <address-setting match="orders">
 
-                <!-- Messages failing too many times -->
                 <dead-letter-address>DLQ</dead-letter-address>
 
-                <!-- After 3 unsuccessful deliveries -->
                 <max-delivery-attempts>3</max-delivery-attempts>
 
-                <!-- Wait 2 seconds before retry -->
                 <redelivery-delay>2000</redelivery-delay>
 
-                <!-- Expired messages -->
+                <persist-delivery-count-before-delivery>true</persist-delivery-count-before-delivery>
+
+                <redelivery-delay-multiplier>1.0</redelivery-delay-multiplier>
+
+                <max-redelivery-delay>2000</max-redelivery-delay>
+
                 <expiry-address>EXPIRY</expiry-address>
 
             </address-setting>
-
 
             <!-- Default settings -->
 

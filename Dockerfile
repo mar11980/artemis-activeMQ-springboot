@@ -1,9 +1,9 @@
 FROM eclipse-temurin:21-jdk
 
-ARG JAR_FILE=target/*.jar
+COPY ./target/activemq-messaging-0.0.1-SNAPSHOT.jar app.jar
 
-COPY ./target/activemq-messaging-0.0.1-SNAPSHOT.jar springbootartemisMQ.jar
+COPY otel/opentelemetry-javaagent.jar /otel/opentelemetry-javaagent.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "springbootartemisMQ.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
