@@ -2,7 +2,7 @@ services:
 
   postgres:
     image: postgres:18
-    container_name: postgres-artemis
+    container_name: artemis-postgres
 
     environment:
       POSTGRES_DB: vaudoise
@@ -61,11 +61,11 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    container_name: messaging-artemis
+    container_name: artemis-messaging
 
     depends_on:
 #      artemis:
-#        condition: service_healthy
+#        condition: service_healthy  this is important !!!
       postgres:
         condition: service_healthy
 
