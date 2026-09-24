@@ -56,3 +56,7 @@ activemq-messaging/
 └── resources/
 ├── application.yml
 └── broker.xml
+
+broker.xml it's for Docker Compose Artemis
+
+

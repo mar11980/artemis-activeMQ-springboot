@@ -34,7 +34,7 @@ services:
 
 
   artemis:
-    image: apache/artemis:2.44.0
+    image: apache/artemis:latest
     container_name: artemis-broker
 
     ports:
@@ -46,25 +46,26 @@ services:
       ARTEMIS_PASSWORD: admin
 
     volumes:
-      - ./src/main/resources/broker.xml:/var/lib/artemis-instance/etc/broker.xml
+      - ./src/main/resources/broker.xml:/var/lib/artemis-instance/etc-override/broker.xml:ro
 
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8161/console/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8161/console/ || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 20
+      start_period: 60s
 
 
   my-artemis-service:
     build:
       context: .
+      dockerfile: Dockerfile
 
     container_name: messaging-artemis
 
     depends_on:
-      artemis:
-        condition: service_healthy
+#      artemis:
+#        condition: service_healthy
       postgres:
         condition: service_healthy
 
@@ -83,6 +84,8 @@ services:
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: none
 
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/vaudoise
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lambda
@@ -93,8 +96,10 @@ services:
       SPRING_JPA_SHOW_SQL: "true"
 
       SPRING_SQL_INIT_MODE: always
-      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:db/schema.sql
-      SPRING_SQL_INIT_DATA_LOCATIONS: classpath:db/data.sql
+#      SPRING_SQL_INIT_SCHEMA_LOCATIONS: classpath:db/schema.sql
+#      SPRING_SQL_INIT_DATA_LOCATIONS: classpath:db/data.sql
+
+      SPRING_JMS_LISTENER_SESSION_TRANSACTED: "true"
 
       SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
 
@@ -104,3 +109,5 @@ services:
       MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"
 
     restart: unless-stopped
+
+
