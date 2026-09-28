@@ -10,6 +10,9 @@ import com.springboot.activemq.messaging.dto.OrderRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @AllArgsConstructor
 public class OrderProducer {
@@ -37,14 +40,20 @@ public class OrderProducer {
                     context.createProducer();
 
             if (ttl > 0) {
+                System.out.println("setting timeout to leave into orders queue " + ttl);
+                System.out.println("Time: " +
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
                 producer.setTimeToLive(ttl);
             }
 
             producer.send(queue, json);
 
+
             System.out.println(
                     "Message sent: " + json
             );
+            System.out.println("Time: " +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
     }
 }

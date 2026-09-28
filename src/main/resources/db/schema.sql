@@ -4,6 +4,6 @@ CREATE TABLE "orders" (
     id BIGSERIAL PRIMARY KEY,
     customer VARCHAR(255),
     amount NUMERIC(10,0),
-    fail VARCHAR(255)
+    fail BOOLEAN NOT NULL DEFAULT FALSE
 );
 
