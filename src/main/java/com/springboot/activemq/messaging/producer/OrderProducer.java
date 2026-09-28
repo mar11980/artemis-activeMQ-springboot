@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
+import jakarta.jms.JMSProducer;
 import jakarta.jms.Queue;
 import com.springboot.activemq.messaging.dto.OrderRequest;
 
@@ -36,7 +37,7 @@ public class OrderProducer {
             Queue queue =
                     context.createQueue(QUEUE_NAME);
 
-            var producer =
+            JMSProducer producer =
                     context.createProducer();
 
             if (ttl > 0) {
