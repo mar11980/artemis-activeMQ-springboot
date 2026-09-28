@@ -48,6 +48,8 @@
                 <max-redelivery-delay>2000</max-redelivery-delay>
 
                 <expiry-address>EXPIRY</expiry-address>
+<!--                <expiry-delay>5000</expiry-delay>
+                <expiry-scan-period>1000</expiry-scan-period>-->
             </address-setting>
 
             <address-setting match="#">
