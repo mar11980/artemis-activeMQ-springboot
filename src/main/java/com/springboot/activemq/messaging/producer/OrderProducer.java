@@ -1,60 +1,34 @@
 package com.springboot.activemq.messaging.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.jms.ConnectionFactory;
+import com.springboot.activemq.messaging.config.TlsConfig;
 import jakarta.jms.JMSContext;
-import jakarta.jms.JMSProducer;
 import jakarta.jms.Queue;
-import com.springboot.activemq.messaging.dto.OrderRequest;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import static com.springboot.activemq.messaging.system.SetEnv.requireEnv;
 
-@Service
-@AllArgsConstructor
 public class OrderProducer {
 
-    private static final String QUEUE_NAME = "orders";
+    public static void main(String[] args) {
+        String username = "producer";
+        String password = requireEnv("ORDER_PRODUCER_PASSWORD");
 
-    private final ConnectionFactory connectionFactory;
+        try (ActiveMQConnectionFactory factory =
+                     TlsConfig.createFactory(username, password);
+             JMSContext context = factory.createContext()) {
 
-    private final ObjectMapper objectMapper;
+            Queue queue = context.createQueue("orders.in");
 
-    public void send(
-            OrderRequest order,
-            long ttl) throws Exception {
+            context.createProducer().send(
+                    queue,
+                    "{\"orderId\":1003,\"product\":\"Ananas\"}");
 
-        String json =
-                objectMapper.writeValueAsString(order);
+            System.out.println("Order sent to orders.in");
 
-        try (JMSContext context =
-                     connectionFactory.createContext()) {
-
-            Queue queue =
-                    context.createQueue(QUEUE_NAME);
-
-            JMSProducer producer =
-                    context.createProducer();
-
-            if (ttl > 0) {
-                System.out.println("setting timeout to leave into orders queue " + ttl);
-                System.out.println("Time: " +
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-                producer.setTimeToLive(ttl);
-            }
-
-            producer.send(queue, json);
-
-
-            System.out.println(
-                    "Message sent: " + json
-            );
-            System.out.println("Time: " +
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 }

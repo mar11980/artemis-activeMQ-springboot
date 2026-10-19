@@ -13,16 +13,9 @@ public class ExpiryConsumer {
             throws Exception {
 
         System.out.println();
-        System.out.println(
-                "************* EXPIRY ***************"
-        );
 
         System.out.println(
                 "Expired message:"
-        );
-
-        System.out.println(
-                message.getText()
         );
 
         System.out.println(

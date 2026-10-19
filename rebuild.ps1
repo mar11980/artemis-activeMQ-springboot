@@ -10,7 +10,7 @@ Start-Sleep -Seconds 5
 
 Write-Host "=== Removing Docker WSL disk ===" -ForegroundColor Yellow
 
-$dockerDisk = "C:\Users\marce\AppData\Local\Docker\wsl\disk\docker_data.vhdx"
+$dockerDisk = "C:\Users\Marcel\AppData\Local\Docker\wsl\disk"
 
 if (Test-Path $dockerDisk) {
     Remove-Item -Path $dockerDisk -Force
