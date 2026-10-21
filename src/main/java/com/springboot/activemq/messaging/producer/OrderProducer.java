@@ -1,34 +1,33 @@
 package com.springboot.activemq.messaging.producer;
 
-import com.springboot.activemq.messaging.config.TlsConfig;
-import jakarta.jms.JMSContext;
-import jakarta.jms.Queue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboot.activemq.messaging.dto.OrderRequest;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Service;
 
-import static com.springboot.activemq.messaging.system.SetEnv.requireEnv;
-
+@Service
+@AllArgsConstructor
+@Slf4j
 public class OrderProducer {
 
-    public static void main(String[] args) {
-        String username = "producer";
-        String password = requireEnv("ORDER_PRODUCER_PASSWORD");
+    private final JmsTemplate orderProducerJmsTemplate;
+    private final ObjectMapper objectMapper;
 
-        try (ActiveMQConnectionFactory factory =
-                     TlsConfig.createFactory(username, password);
-             JMSContext context = factory.createContext()) {
+    public void produceMessages(OrderRequest order, long ttl) throws JsonProcessingException {
 
-            Queue queue = context.createQueue("orders.in");
+        if(ttl > 0)
+         orderProducerJmsTemplate.setTimeToLive(ttl);
 
-            context.createProducer().send(
-                    queue,
-                    "{\"orderId\":1003,\"product\":\"Ananas\"}");
+        orderProducerJmsTemplate.convertAndSend(
+                "orders.in",
+                objectMapper.writeValueAsString(order)
+        );
 
-            System.out.println("Order sent to orders.in");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        log.info("Order {} sent in order.in queue", order);
     }
 
 }

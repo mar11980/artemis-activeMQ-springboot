@@ -8,7 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExpiryConsumer {
 
-    @JmsListener(destination = "EXPIRY")
+    @JmsListener(
+            destination = "ExpiryQueue",
+            containerFactory = "orderExpiredListenerFactory"
+    )
     public void consume(TextMessage message)
             throws Exception {
 

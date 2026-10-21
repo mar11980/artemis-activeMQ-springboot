@@ -1,42 +1,69 @@
 package com.springboot.activemq.messaging.consumer;
 
 
-import com.springboot.activemq.messaging.config.TlsConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboot.activemq.messaging.dto.OrderRequest;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
+import lombok.AllArgsConstructor;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Service;
 
-import jakarta.jms.JMSConsumer;
-import jakarta.jms.JMSContext;
-import jakarta.jms.Queue;
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-
-import static com.springboot.activemq.messaging.system.SetEnv.requireEnv;
-
+@Service
+@AllArgsConstructor
 public class OrderConsumer {
 
-    public static void main(String[] args) {
-        String username = "consumer";
-        String password = requireEnv("ORDER_CONSUMER_PASSWORD");
+    private final ObjectMapper objectMapper;
 
-        try (ActiveMQConnectionFactory factory =
-                     TlsConfig.createFactory(username, password);
-             JMSContext context = factory.createContext()) {
+    @JmsListener(
+            destination = "orders.out",
+            containerFactory = "jmsListenerContainerFactory"
+    )
+    public void consumeMessages(TextMessage message) throws JsonProcessingException, JMSException {
 
-            Queue queue = context.createQueue("orders.out");
-            JMSConsumer consumer = context.createConsumer(queue);
+        OrderRequest order =
+                objectMapper.readValue(
+                        message.getText(),
+                        OrderRequest.class
+                );
 
-            consumer.setMessageListener(message -> {
-                try {
-                    String body = message.getBody(String.class);
-                    System.out.println("Order received: " + body);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+        /*
+         * Simulate processing failure.
+         */
 
-            new java.util.concurrent.CountDownLatch(1).await();
+        System.out.println("Message ID: " + message.getJMSMessageID());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println(
+                "Delivery count: " +
+                        message.getIntProperty("JMSXDeliveryCount")
+        );
+
+        System.out.println(
+                "Redelivered: " +
+                        message.getJMSRedelivered()
+        );
+
+        System.out.println(
+                "Destination: " +
+                        message.getJMSDestination()
+        );
+
+        if (order.isFail()) {
+
+            System.out.println(
+                    "Processing FAILED! ❌"
+            );
+
+            throw new RuntimeException(
+                    "Simulated processing error"
+            );
         }
+
+        System.out.println(
+                "Order received from orders.out: " + message
+        );
+
     }
 
 }

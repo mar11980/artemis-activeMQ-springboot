@@ -1,0 +1,45 @@
+package com.springboot.activemq.messaging.controller;
+
+
+
+import com.springboot.activemq.messaging.dto.OrderRequest;
+import com.springboot.activemq.messaging.producer.OrderProducer;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/orders")
+@AllArgsConstructor
+@SuppressWarnings("NullableProblems")
+public class OrderController {
+
+    private final OrderProducer producer;
+
+    @PostMapping
+    public ResponseEntity<String> send(
+            @RequestBody OrderRequest order)
+            throws Exception {
+
+        producer.produceMessages(order,0);
+
+        return ResponseEntity.ok(
+                "Order sent to Artemis MQ 🚀"
+        );
+    }
+
+    @PostMapping("/expire")
+    public ResponseEntity<String> sendWithExpiration(
+            @RequestBody OrderRequest order)
+            throws Exception {
+
+        /*
+         * Message expires after 5 seconds.
+         */
+        producer.produceMessages(order, 5000);
+
+        return ResponseEntity.ok(
+                "Order sent with TTL = 5 seconds ⏳"
+        );
+    }
+}

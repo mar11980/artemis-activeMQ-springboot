@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeadLetterConsumer {
 
-    @JmsListener(destination = "DLQ")
+    @JmsListener(
+            destination = "DLQ"
+//            ,containerFactory = "orderDLQListenerFactory"
+    )
     public void consume(TextMessage message)
             throws Exception {
 
         System.out.println();
-        System.out.println(
-                "☠️ *************** DLQ ***************"
-        );
 
         System.out.println(
                 "💀 Dead letter message:"
@@ -25,9 +25,6 @@ public class DeadLetterConsumer {
                 message.getText()
         );
 
-        System.out.println(
-                "☠️ ************************************"
-        );
         System.out.println();
     }
 }
