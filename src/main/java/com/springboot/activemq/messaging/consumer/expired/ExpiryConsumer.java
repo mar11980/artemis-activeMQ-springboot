@@ -12,8 +12,7 @@ public class ExpiryConsumer {
             destination = "ExpiryQueue",
             containerFactory = "orderExpiredListenerFactory"
     )
-    public void consume(TextMessage message)
-            throws Exception {
+    public void consume(TextMessage message) {
 
         System.out.println();
 

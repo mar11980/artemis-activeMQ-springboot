@@ -10,7 +10,7 @@ public class DeadLetterConsumer {
 
     @JmsListener(
             destination = "DLQ"
-//            ,containerFactory = "orderDLQListenerFactory"
+            ,containerFactory = "orderDLQListenerFactory"
     )
     public void consume(TextMessage message)
             throws Exception {
